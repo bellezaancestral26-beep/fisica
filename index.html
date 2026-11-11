@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab Física · Caída Libre</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <div class="badge">LABORATORIO VIRTUAL · MECÁNICA</div>
+      <h1>Caída <span>Libre</span></h1>
+      <p class="lead">Observa cómo la energía potencial se transforma en energía cinética mientras un objeto cae. Modelo ideal sin resistencia del aire.</p>
+      <div class="hero-formulas">
+        <span>Em = Ep + Ec</span>
+        <span>g = 9.81 m/s²</span>
+      </div>
+      <a href="#simulador" class="btn-primary">Iniciar experimento ↓</a>
+    </div>
+  </header>
+
+  <main id="simulador">
+    <!-- 01 EXPERIMENTA -->
+    <section class="panel" id="experimenta">
+      <div class="panel-header">
+        <span class="num">01</span>
+        <h2>Experimenta</h2>
+      </div>
+      <p class="panel-desc">Configura los parámetros y observa la caída en tiempo real.</p>
+
+      <div class="grid-2">
+        <div class="controls card">
+          <h3>Parámetros</h3>
+          <label>Masa <span id="masaVal">2.0</span> kg</label>
+          <input type="range" id="masa" min="0.5" max="10" step="0.1" value="2">
+
+          <label>Altura inicial <span id="alturaVal">20</span> m</label>
+          <input type="range" id="altura" min="5" max="100" step="1" value="20">
+
+          <label>Gravedad <span id="gravVal">9.81</span> m/s²</label>
+          <input type="range" id="gravedad" min="1" max="20" step="0.1" value="9.81">
+
+          <div class="btn-row">
+            <button id="btnStart" class="btn-accent">▶ Iniciar caída</button>
+            <button id="btnReset" class="btn-ghost">↺ Reiniciar</button>
+          </div>
+          <p class="note">Modelo ideal: se desprecia la resistencia del aire y el objeto parte del reposo.</p>
+        </div>
+
+        <div class="viewport card">
+          <div class="live-badge">EN VIVO</div>
+          <div class="drop-zone" id="dropZone">
+            <div class="ground"></div>
+            <div class="object" id="object"></div>
+            <div class="height-marker" id="heightMarker">20 m</div>
+          </div>
+          <div class="viewport-info">
+            <div>Altura actual: <strong id="alturaActual">20.0</strong> m</div>
+            <div>Tiempo: <strong id="tiempo">0.00</strong> s</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 OBSERVA -->
+    <section class="panel" id="observa">
+      <div class="panel-header">
+        <span class="num">02</span>
+        <h2>Observa</h2>
+      </div>
+      <p class="panel-desc">Resultados en tiempo real. Los valores se actualizan al cambiar los parámetros o durante la caída.</p>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="label">Velocidad</div>
+          <div class="value" id="vel">0.00</div>
+          <div class="unit">m/s</div>
+        </div>
+        <div class="metric">
+          <div class="label">Energía Potencial</div>
+          <div class="value" id="ep">392.40</div>
+          <div class="unit">J</div>
+          <small>Ep = m·g·h</small>
+        </div>
+        <div class="metric">
+          <div class="label">Energía Cinética</div>
+          <div class="value" id="ec">0.00</div>
+          <div class="unit">J</div>
+          <small>Ec = ½·m·v²</small>
+        </div>
+        <div class="metric highlight">
+          <div class="label">Energía Mecánica</div>
+          <div class="value" id="em">392.40</div>
+          <div class="unit">J</div>
+          <small>Em = Ep + Ec</small>
+        </div>
+      </div>
+
+      <div class="energy-bars card">
+        <h3>Transformación de energía</h3>
+        <div class="bars">
+          <div class="bar-group">
+            <span>Potencial</span>
+            <div class="bar"><div class="fill pot" id="barPot"></div></div>
+            <span id="pctPot">100%</span>
+          </div>
+          <div class="bar-group">
+            <span>Cinética</span>
+            <div class="bar"><div class="fill kin" id="barKin"></div></div>
+            <span id="pctKin">0%</span>
+          </div>
+        </div>
+        <p class="conservation">En ausencia de rozamiento, la energía mecánica total permanece constante.</p>
+      </div>
+
+      <div class="table-wrap card">
+        <h3>Tabla de datos</h3>
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th>Avance</th>
+              <th>Altura (m)</th>
+              <th>Velocidad (m/s)</th>
+              <th>Ep (J)</th>
+              <th>Ec (J)</th>
+              <th>Em (J)</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="graph-card card">
+        <h3>Gráfica en tiempo real</h3>
+        <p class="graph-desc">Energía Potencial (cyan) y Cinética (naranja) durante la caída</p>
+        <canvas id="energyChart" height="180"></canvas>
+      </div>
+    </section>
+
+    <!-- 03 COMPRENDE -->
+    <section class="panel" id="comprende">
+      <div class="panel-header">
+        <span class="num">03</span>
+        <h2>Comprende</h2>
+      </div>
+      <p class="panel-desc">La física detrás del simulador.</p>
+
+      <div class="formulas">
+        <div class="formula-card">
+          <h3>Energía potencial</h3>
+          <code>Ep = m · g · h</code>
+          <p>Energía que tiene el objeto por su altura respecto al suelo.</p>
+        </div>
+        <div class="formula-card">
+          <h3>Energía cinética</h3>
+          <code>Ec = ½ · m · v²</code>
+          <p>Energía asociada al movimiento. Aumenta al ganar velocidad.</p>
+        </div>
+        <div class="formula-card">
+          <h3>Energía mecánica</h3>
+          <code>Em = Ep + Ec</code>
+          <p>Suma de potencial y cinética. En este modelo ideal se conserva.</p>
+        </div>
+      </div>
+
+      <div class="explanation card">
+        <h3>¿Qué ocurre durante la caída?</h3>
+        <p>Al principio el objeto tiene energía potencial máxima y velocidad cero. Mientras cae, pierde altura, gana velocidad y la energía potencial se convierte en cinética. Justo antes de llegar al suelo, la energía cinética alcanza su máximo.</p>
+      </div>
+
+      <div class="your-turn">
+        <h3>Tu turno</h3>
+        <p>Cambia la masa, la altura y la gravedad. ¿Qué sucede con la energía mecánica? ¿La masa modifica la velocidad de caída en este modelo?</p>
+        <a href="#simulador" class="btn-primary">Probar otros valores</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Laboratorio de Física · Caída Libre · Modelo ideal sin resistencia del aire</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
